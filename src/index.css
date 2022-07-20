@@ -1,0 +1,26 @@
+.notification {
+  display: flex;
+  position: fixed;
+  top: 1;
+  right: 0;
+  background-color: rgb(255, 39, 39);
+  color: rgb(255, 255, 255);
+  padding: 15px;
+  border-radius: 5px 0 0 5px;
+}
+
+.success {
+  background-color: #c3f3d7;
+  color: #24ad5d;
+  border: solid;
+  border-width: 0 0 0 7px;
+  border-color: #24ad5d;
+}
+
+.error {
+  background-color: #ffe0e3;
+  color: #ff4858;
+  border: solid;
+  border-width: 0 0 0 7px;
+  border-color: #ff4858;
+}
