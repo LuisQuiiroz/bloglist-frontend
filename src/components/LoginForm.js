@@ -1,6 +1,15 @@
-import React from 'react'
+import { useState } from 'react'
+import PropTypes from 'prop-types'
 
-const LoginForm = ({ username, password, setUsername, setPassword, handleLogin }) => {
+const LoginForm = ({ loginUser }) => {
+  const [username, setUsername] = useState('root')
+  const [password, setPassword] = useState('salainen')
+
+  const handleLogin = e => {
+    e.preventDefault()
+    loginUser({ username, password })
+    setPassword('')
+  }
   return (
     <>
       <form onSubmit={handleLogin} autoComplete='off'>
@@ -16,7 +25,7 @@ const LoginForm = ({ username, password, setUsername, setPassword, handleLogin }
         <div>
           <p>password</p>
           <input
-            type='text'
+            type='password'
             name='password'
             value={password}
             onChange={({ target }) => setPassword(target.value)}
@@ -26,6 +35,10 @@ const LoginForm = ({ username, password, setUsername, setPassword, handleLogin }
       </form>
     </>
   )
+}
+
+LoginForm.propTypes = {
+  loginUser: PropTypes.func.isRequired
 }
 
 export default LoginForm

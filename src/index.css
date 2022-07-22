@@ -24,3 +24,9 @@
   border-width: 0 0 0 7px;
   border-color: #ff4858;
 }
+
+.blog {
+  border: 1px solid gray;
+  margin: 5px 0;
+  padding: 5px;
+}

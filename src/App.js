@@ -1,32 +1,29 @@
 import './index.css'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
-import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable '
+import toast, { Toaster } from 'react-hot-toast'
 
 const App = () => {
-  const initialNewBlog = {
-    title: '',
-    author: '',
-    url: ''
-  }
   const [blogs, setBlogs] = useState([])
-  const [message, setMessage] = useState(null);
 
-  const [username, setUsername] = useState('root');
-  const [password, setPassword] = useState('salainen');
+  const [user, setUser] = useState(null)
 
-  const [user, setUser] = useState(null);
+  const blogFormRef = useRef()
 
-  const [newBlog, setNewBlog] = useState(initialNewBlog);
+  // top likes
+  blogs.sort((a, b) => b.likes - a.likes)
+  const blogsfromDB = async () => {
+    const allBlogs = await blogService.getAll()
+    setBlogs(allBlogs)
+  }
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs)
-    )
+    blogsfromDB()
   }, [])
 
   useEffect(() => {
@@ -36,26 +33,17 @@ const App = () => {
       setUser(user)
       blogService.setToken(user.token)
     }
-  }, []);
+  }, [])
 
-  const handleLogin = async e => {
-    e.preventDefault()
+  const loginUser = async (dataUser) => {
     try {
-      const user = await loginService.login({ username, password })
+      const user = await loginService.login(dataUser)
       blogService.setToken(user.token)
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
       setUser(user)
-      setUsername('')
-      setPassword('')
-      setMessage('Login')
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000);
+      toast.success('Logged in')
     } catch (error) {
-      setMessage('Wrong credentials')
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000);
+      toast.error('Wrong credentials')
     }
   }
 
@@ -65,65 +53,74 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogappUser')
   }
 
-  const handleCreateBlog = async e => {
-    e.preventDefault()
+  const addBlog = async (newBlog) => {
     try {
+      blogFormRef.current.toggleVisibility()
       const blogAdded = await blogService.create(newBlog)
-      setBlogs(blogs.concat(blogAdded))
-      setNewBlog(initialNewBlog)
-      setMessage('new blog added')
-      setTimeout(() => {
-        setMessage(null)
-      }, 3000);
+      const blogfromDB = await blogService.getOneBlog(blogAdded.id)
+      setBlogs(blogs.concat(blogfromDB))
+      toast.success('new blog added')
     } catch (error) {
-      setMessage('missing content')
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000);
+      toast.error('missing content')
     }
-
   }
-  const changeValuesofNewBlog = e => {
-    setNewBlog({
-      ...newBlog,
-      [e.target.name]: e.target.value
-    })
+  const updateBloglikes = async (id) => {
+    try {
+      const blogToUpdate = await blogService.getOneBlog(id)
+      let { likes } = blogToUpdate
+      await blogService.updateLikes(id, { likes: likes + 1 })
+      toast('Like!', {
+        icon: '👍',
+      })
+    } catch (error) {
+      toast.error('error to add like')
+    }
+  }
+  const removeBLogByUser = async (id, title) => {
+    try {
+      if (window.confirm(`Are you sure to delete '${title}'`)) {
+        await blogService.deleteBlog(id)
+        setBlogs(blogs.filter((blog) => blog.id !== id))
+        toast.success('Deleted blog')
+      }
+    } catch (error) {
+      toast.error('error to delete your blog')
+    }
   }
 
   return (
     <div>
-      <Notification message={message} />
-      {
-        user === null
-          ? <>
-            <h2>Log in to application</h2>
-            <LoginForm
-              username={username}
-              password={password}
-              setUsername={setUsername}
-              setPassword={setPassword}
-              handleLogin={handleLogin}
-            />
-
-          </>
-          : <>
+      <Toaster position="top-center" reverseOrder={false} />
+      {user === null ? (
+        <>
+          <h2>Log in to application</h2>
+          <LoginForm loginUser={loginUser} />
+        </>
+      ) : (
+        <>
+          <div>
             <h2>blogs</h2>
             <p>Hello {user.username} </p>
             <input
-              type='button'
-              value='Log out'
+              type="button"
+              value="Log out"
               onClick={() => handleLogout()}
             />
-            <BlogForm
-              newBlog={newBlog}
-              handleCreateBlog={handleCreateBlog}
-              changeValuesofNewBlog={changeValuesofNewBlog}
+          </div>
+          <Togglable buttonLabel="new blog" ref={blogFormRef}>
+            <BlogForm createBlog={addBlog} />
+          </Togglable>
+          {blogs.map((blog) => (
+            <Blog
+              key={blog.id}
+              blog={blog}
+              updateBloglikes={updateBloglikes}
+              userLogged={user.username}
+              removeBLogByUser={removeBLogByUser}
             />
-            {blogs.map(blog =>
-              <Blog key={blog.id} blog={blog} />
-            )}
-          </>
-      }
+          ))}
+        </>
+      )}
     </div>
   )
 }

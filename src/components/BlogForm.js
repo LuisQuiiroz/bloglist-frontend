@@ -1,7 +1,28 @@
-import React from 'react'
+import { useState } from 'react'
+import PropTypes from 'prop-types'
 
-const BlogForm = ({ newBlog, handleCreateBlog, changeValuesofNewBlog }) => {
+const BlogForm = ({ createBlog }) => {
+  const initialNewBlog = {
+    title: '',
+    author: '',
+    url: ''
+  }
+  const [newBlog, setNewBlog] = useState(initialNewBlog)
   const { title, author, url } = newBlog
+
+  const changeValuesofNewBlog = e => {
+    setNewBlog({
+      ...newBlog,
+      [e.target.name]: e.target.value
+    })
+  }
+
+  const handleCreateBlog = e => {
+    e.preventDefault()
+    createBlog(newBlog)
+    setNewBlog(initialNewBlog)
+  }
+
   return (
     <form autoComplete='off' onSubmit={handleCreateBlog}>
       <div>
@@ -32,13 +53,16 @@ const BlogForm = ({ newBlog, handleCreateBlog, changeValuesofNewBlog }) => {
             onChange={changeValuesofNewBlog}
           />
         </div>
-        <input
-          type='submit'
-
-        />
+        <button type='submit'>
+          create
+        </button>
       </div>
     </form>
   )
+}
+
+BlogForm.propTypes = {
+  createBlog: PropTypes.func.isRequired
 }
 
 export default BlogForm
