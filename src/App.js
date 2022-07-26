@@ -15,8 +15,6 @@ const App = () => {
 
   const blogFormRef = useRef()
 
-  // top likes
-  blogs.sort((a, b) => b.likes - a.likes)
   const blogsfromDB = async () => {
     const allBlogs = await blogService.getAll()
     setBlogs(allBlogs)
@@ -34,6 +32,9 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
+
+  // top likes
+  blogs.sort((a, b) => b.likes - a.likes)
 
   const loginUser = async (dataUser) => {
     try {

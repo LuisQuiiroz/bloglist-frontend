@@ -25,24 +25,23 @@ const Blog = ({ blog, updateBloglikes, userLogged, removeBLogByUser }) => {
 
   return (
     <div className='blog'>
+      <span> {title} </span>
+      <span> {author} </span>
       <div style={hidenWhenVisible} >
-        <span>{title}</span>
         <button
           onClick={toggleVisibility}
         >
           view
         </button>
       </div>
-      <div style={showWhenVisible}>
-        <label>{title}</label>
+      <div style={showWhenVisible} className='togglableContent'>
         <button
           onClick={toggleVisibility}
         >
           hide
         </button>
-        <span>{url}</span>
-        <span>{author}</span>
-        <span>Likes {like}</span>
+        <span> {url} </span>
+        <span>Likes {like} </span>
         <button onClick={updateLikes}>Like</button>
         {
           userId.username === userLogged &&
@@ -58,8 +57,8 @@ const Blog = ({ blog, updateBloglikes, userLogged, removeBLogByUser }) => {
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  updateBloglikes: PropTypes.func.isRequired,
-  userLogged: PropTypes.string.isRequired,
-  removeBLogByUser: PropTypes.func.isRequired,
+  updateBloglikes: PropTypes.func,
+  userLogged: PropTypes.string,
+  removeBLogByUser: PropTypes.func,
 }
 export default Blog
