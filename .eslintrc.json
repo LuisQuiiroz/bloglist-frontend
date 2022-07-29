@@ -1,7 +1,9 @@
 {
     "env": {
         "browser": true,
-        "es2021": true
+        "es2021": true,
+        "jest/globals": true,
+        "cypress/globals": true
     },
     "extends": [
         "eslint:recommended",
@@ -15,7 +17,9 @@
         "sourceType": "module"
     },
     "plugins": [
-        "react"
+        "react",
+        "jest",
+        "cypress"
     ],
     "rules": {
         "indent": [
@@ -37,4 +41,4 @@
         "react/react-in-jsx-scope": 0,
         "react/jsx-uses-react": 0
     }
-} 
+}

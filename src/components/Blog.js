@@ -24,7 +24,7 @@ const Blog = ({ blog, updateBloglikes, userLogged, removeBLogByUser }) => {
   }
 
   return (
-    <div className='blog'>
+    <div className='blog' data-cy="blog">
       <span> {title} </span>
       <span> {author} </span>
       <div style={hidenWhenVisible} >
@@ -42,10 +42,15 @@ const Blog = ({ blog, updateBloglikes, userLogged, removeBLogByUser }) => {
         </button>
         <span> {url} </span>
         <span>Likes {like} </span>
-        <button onClick={updateLikes}>Like</button>
+        <button
+          data-cy="like"
+          onClick={updateLikes}>
+          Like
+        </button>
         {
           userId.username === userLogged &&
           <button
+            data-cy="remove"
             onClick={removeBLog}>
             remove
           </button>

@@ -2,8 +2,8 @@ import { useState } from 'react'
 import PropTypes from 'prop-types'
 
 const LoginForm = ({ loginUser }) => {
-  const [username, setUsername] = useState('root')
-  const [password, setPassword] = useState('salainen')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
 
   const handleLogin = e => {
     e.preventDefault()
@@ -18,6 +18,7 @@ const LoginForm = ({ loginUser }) => {
           <input
             type='text'
             name='username'
+            placeholder='username'
             value={username}
             onChange={({ target }) => setUsername(target.value)}
           />
@@ -27,6 +28,7 @@ const LoginForm = ({ loginUser }) => {
           <input
             type='password'
             name='password'
+            placeholder='password'
             value={password}
             onChange={({ target }) => setPassword(target.value)}
           />
